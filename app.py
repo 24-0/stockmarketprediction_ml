@@ -72,8 +72,15 @@ st.success("Model and scaler loaded successfully!")
 
 # Function to fetch data
 def fetch_data(symbol, period='2y'):
-    data = yf.download(symbol, period=period, auto_adjust=True)
-    return data
+    try:
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period=period)
+        if data.empty:
+            st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
+        return data
+    except Exception as e:
+        st.error(f"Error fetching data for {symbol}: {str(e)}")
+        return pd.DataFrame()
 
 # Function to preprocess for prediction
 def preprocess_for_prediction(data, lookback=60):
