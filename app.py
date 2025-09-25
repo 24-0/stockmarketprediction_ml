@@ -93,76 +93,80 @@ def main():
     prediction_days = st.sidebar.slider("Prediction Days", min_value=1, max_value=90, value=30)
     
     if st.sidebar.button("Analyze & Predict"):
-        with st.spinner("Fetching data and making predictions..."):
-            # Fetch data
-            data = fetch_data(symbol)
-            if data.empty:
-                st.error(f"No data found for symbol {symbol}")
-                return
-            
-            # Preprocess for prediction
-            last_data = preprocess_for_prediction(data)
-            
-            # Predict
-            predictions = predict_future_prices(model, last_data, prediction_days)
-            
-            # Display results
-            st.success("Analysis Complete!")
-            
-            # Historical Data Chart
-            st.subheader(f"Historical Data for {symbol}")
-            fig, ax = plt.subplots(figsize=(12, 6))
-            ax.plot(data.index, data['Close'], label='Historical Close Price', color='#00ff00')
-            ax.set_title(f'{symbol} Historical Close Price', color='white')
-            ax.set_xlabel('Date', color='white')
-            ax.set_ylabel('Price (USD)', color='white')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
-            fig.patch.set_facecolor('#000000')
-            ax.set_facecolor('#000000')
-            ax.tick_params(colors='white')
-            st.pyplot(fig)
-            
-            # Prediction Chart
-            st.subheader(f"Price Prediction for Next {prediction_days} Days")
-            last_date = data.index[-1]
-            future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=prediction_days)
-            
-            fig2, ax2 = plt.subplots(figsize=(12, 6))
-            ax2.plot(data.index[-60:], data['Close'][-60:], label='Recent Historical', color='#00ff00')
-            ax2.plot(future_dates, predictions, label='Predicted', color='#ff0000', linestyle='--')
-            ax2.set_title(f'{symbol} Price Prediction', color='white')
-            ax2.set_xlabel('Date', color='white')
-            ax2.set_ylabel('Price (USD)', color='white')
-            ax2.legend()
-            ax2.grid(True, alpha=0.3)
-            fig2.patch.set_facecolor('#000000')
-            ax2.set_facecolor('#000000')
-            ax2.tick_params(colors='white')
-            st.pyplot(fig2)
-            
-            # Analysis
-            st.subheader("Analysis Summary")
-            current_price = data['Close'].iloc[-1].item()
-            predicted_price = predictions[-1].item()
-            change = ((predicted_price - current_price) / current_price) * 100
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Current Price", f"${current_price:.2f}")
-            with col2:
-                st.metric("Predicted Price (End)", f"${predicted_price:.2f}")
-            with col3:
-                st.metric("Predicted Change", f"{change:.2f}%", delta=f"{change:.2f}%")
-            
-            if change > 0:
-                st.success(f"📈 Predicted upward trend of {change:.2f}% over {prediction_days} days.")
-            else:
-                st.error(f"📉 Predicted downward trend of {change:.2f}% over {prediction_days} days.")
-            
-            # Data Table
-            st.subheader("Recent Data")
-            st.dataframe(data.tail(10))
+        try:
+            with st.spinner("Fetching data and making predictions..."):
+                # Fetch data
+                data = fetch_data(symbol)
+                if data.empty:
+                    st.error(f"No data found for symbol {symbol}")
+                    return
+                
+                # Preprocess for prediction
+                last_data = preprocess_for_prediction(data)
+                
+                # Predict
+                predictions = predict_future_prices(model, last_data, prediction_days)
+                
+                # Display results
+                st.success("Analysis Complete!")
+                
+                # Historical Data Chart
+                st.subheader(f"Historical Data for {symbol}")
+                fig, ax = plt.subplots(figsize=(12, 6))
+                ax.plot(data.index, data['Close'], label='Historical Close Price', color='#00ff00')
+                ax.set_title(f'{symbol} Historical Close Price', color='white')
+                ax.set_xlabel('Date', color='white')
+                ax.set_ylabel('Price (USD)', color='white')
+                ax.legend()
+                ax.grid(True, alpha=0.3)
+                fig.patch.set_facecolor('#000000')
+                ax.set_facecolor('#000000')
+                ax.tick_params(colors='white')
+                st.pyplot(fig)
+                
+                # Prediction Chart
+                st.subheader(f"Price Prediction for Next {prediction_days} Days")
+                last_date = data.index[-1]
+                future_dates = pd.date_range(start=last_date + pd.Timedelta(days=1), periods=prediction_days)
+                
+                fig2, ax2 = plt.subplots(figsize=(12, 6))
+                ax2.plot(data.index[-60:], data['Close'][-60:], label='Recent Historical', color='#00ff00')
+                ax2.plot(future_dates, predictions, label='Predicted', color='#ff0000', linestyle='--')
+                ax2.set_title(f'{symbol} Price Prediction', color='white')
+                ax2.set_xlabel('Date', color='white')
+                ax2.set_ylabel('Price (USD)', color='white')
+                ax2.legend()
+                ax2.grid(True, alpha=0.3)
+                fig2.patch.set_facecolor('#000000')
+                ax2.set_facecolor('#000000')
+                ax2.tick_params(colors='white')
+                st.pyplot(fig2)
+                
+                # Analysis
+                st.subheader("Analysis Summary")
+                current_price = data['Close'].iloc[-1].item()
+                predicted_price = predictions[-1].item()
+                change = ((predicted_price - current_price) / current_price) * 100
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Current Price", f"${current_price:.2f}")
+                with col2:
+                    st.metric("Predicted Price (End)", f"${predicted_price:.2f}")
+                with col3:
+                    st.metric("Predicted Change", f"{change:.2f}%", delta=f"{change:.2f}%")
+                
+                if change > 0:
+                    st.success(f"📈 Predicted upward trend of {change:.2f}% over {prediction_days} days.")
+                else:
+                    st.error(f"📉 Predicted downward trend of {change:.2f}% over {prediction_days} days.")
+                
+                # Data Table
+                st.subheader("Recent Data")
+                st.dataframe(data.tail(10))
+        except Exception as e:
+            st.error(f"An error occurred during analysis: {str(e)}")
+            st.write("Please check the symbol and try again.")
 
 if __name__ == "__main__":
     main()
