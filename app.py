@@ -30,9 +30,22 @@ if os.path.exists('static/styles.css'):
 # Load model and scaler
 @st.cache_resource
 def load_model_and_scaler():
-    model = load_model('models/lstm_model.h5')
+    model_path = 'models/lstm_model.h5'
+    if not os.path.exists(model_path):
+        model_path = 'lstm_model.h5'
+        if not os.path.exists(model_path):
+            st.error("No model file found. Please ensure lstm_model.h5 is in the project root or models/ directory.")
+            st.stop()
+    
+    model = load_model(model_path)
     model.compile(optimizer='adam', loss='mse')  # Compile to build metrics
-    scaler = joblib.load('data/scaler.pkl')
+    
+    scaler_path = 'data/scaler.pkl'
+    if not os.path.exists(scaler_path):
+        st.error("Scaler file not found. Please ensure scaler.pkl is in the data/ directory.")
+        st.stop()
+    
+    scaler = joblib.load(scaler_path)
     return model, scaler
 
 model, scaler = load_model_and_scaler()
