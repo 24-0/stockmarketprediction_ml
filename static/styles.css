@@ -1,0 +1,87 @@
+/* Black Theme Styles for Stock Prediction App */
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+}
+
+.stApp {
+    background-color: #000000;
+}
+
+.sidebar .sidebar-content {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.stTextInput > div > div > input {
+    background-color: #222222;
+    color: #ffffff;
+    border: 1px solid #444444;
+}
+
+.stSlider > div > div > div > div {
+    background-color: #444444;
+}
+
+.stButton > button {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #555555;
+}
+
+.stButton > button:hover {
+    background-color: #555555;
+}
+
+.stMetric {
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 5px;
+}
+
+.stDataFrame {
+    background-color: #111111;
+}
+
+.stDataFrame table {
+    color: #ffffff;
+}
+
+.stSubheader {
+    color: #ffffff;
+}
+
+.stMarkdown {
+    color: #ffffff;
+}
+
+.css-1d391kg {
+    background-color: #000000;
+}
+
+.css-1lcbmhc {
+    background-color: #000000;
+}
+
+/* Chart backgrounds */
+.css-1r6slb0 {
+    background-color: #000000;
+}
+
+/* Ensure text is white */
+.css-10trblm, .css-1q8dd3e, .css-1v0mbdj {
+    color: #ffffff !important;
+}
+
+/* Success and error messages */
+.stSuccess {
+    background-color: #004400;
+    color: #00ff00;
+}
+
+.stError {
+    background-color: #440000;
+    color: #ff0000;
+}
