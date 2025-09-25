@@ -27,20 +27,6 @@ def load_css(file_name):
 if os.path.exists('static/styles.css'):
     load_css('static/styles.css')
 
-# Debug: Show directory contents
-st.sidebar.write("### Debug Info")
-st.sidebar.write("Current directory files:")
-st.sidebar.write(os.listdir('.'))
-st.sidebar.write("Models dir exists:", os.path.exists('models'))
-if os.path.exists('models'):
-    st.sidebar.write("Models dir contents:", os.listdir('models'))
-st.sidebar.write("Data dir exists:", os.path.exists('data'))
-if os.path.exists('data'):
-    st.sidebar.write("Data dir contents:", os.listdir('data'))
-st.sidebar.write("Root lstm_model.h5 exists:", os.path.exists('lstm_model.h5'))
-st.sidebar.write("models/lstm_model.h5 exists:", os.path.exists('models/lstm_model.h5'))
-st.sidebar.write("data/scaler.pkl exists:", os.path.exists('data/scaler.pkl'))
-
 # Load model and scaler
 @st.cache_resource
 def load_model_and_scaler():
@@ -67,8 +53,6 @@ try:
 except Exception as e:
     st.error(f"Failed to load model or scaler: {str(e)}")
     st.stop()
-
-st.success("Model and scaler loaded successfully!")
 
 # Function to fetch data
 def fetch_data(symbol, period='2y'):
