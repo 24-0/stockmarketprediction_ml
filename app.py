@@ -4,9 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 import yfinance as yf
+import requests
 from sklearn.preprocessing import MinMaxScaler
 import joblib
 import os
+
+# Set global session for yfinance to avoid cloud impersonation issues
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+})
+yf._session = session
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
@@ -57,14 +65,9 @@ except Exception as e:
 # Function to fetch data
 def fetch_data(symbol, period='2y'):
     import time
-    import yfinance as yf
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            # Set global session headers for yfinance to avoid impersonation issues
-            session = yf.utils.get_session()
-            if session:
-                session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             data = yf.download(symbol, period=period, interval='1d', prepost=False, progress=False)
             if data.empty:
                 st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
