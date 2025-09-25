@@ -64,11 +64,17 @@ except Exception as e:
 
 # Function to fetch data
 def fetch_data(symbol, period='2y'):
+    from datetime import datetime, timedelta
     import time
     max_retries = 3
+    end = datetime.now()
+    if period == '2y':
+        start = end - timedelta(days=730)  # Approx 2 years
+    else:
+        start = end - timedelta(days=365 * int(period[:-1]))
     for attempt in range(max_retries):
         try:
-            data = yf.download(symbol, period=period, interval='1d', prepost=False, progress=False)
+            data = yf.download(symbol, start=start, end=end, interval='1d', prepost=False, progress=False)
             if data.empty:
                 st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
             return data
