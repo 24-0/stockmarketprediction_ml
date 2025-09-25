@@ -72,9 +72,11 @@ def fetch_data(symbol, period='2y'):
         start = end - timedelta(days=730)  # Approx 2 years
     else:
         start = end - timedelta(days=365 * int(period[:-1]))
+    start_str = start.strftime('%Y-%m-%d')
+    end_str = end.strftime('%Y-%m-%d')
     for attempt in range(max_retries):
         try:
-            data = yf.download(symbol, start=start, end=end, interval='1d', prepost=False, progress=False)
+            data = yf.download(symbol, start=start_str, end=end_str, interval='1d', prepost=False, progress=False)
             if data.empty:
                 st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
             return data
