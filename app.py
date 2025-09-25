@@ -56,15 +56,22 @@ except Exception as e:
 
 # Function to fetch data
 def fetch_data(symbol, period='2y'):
-    try:
-        ticker = yf.Ticker(symbol)
-        data = ticker.history(period=period)
-        if data.empty:
-            st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
-        return data
-    except Exception as e:
-        st.error(f"Error fetching data for {symbol}: {str(e)}")
-        return pd.DataFrame()
+    import time
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            ticker = yf.Ticker(symbol)
+            data = ticker.history(period=period)
+            if data.empty:
+                st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
+            return data
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)  # Exponential backoff: 1s, 2s, 4s
+                continue
+            else:
+                st.error(f"Error fetching data for {symbol} after {max_retries} attempts: {str(e)}")
+                return pd.DataFrame()
 
 # Function to preprocess for prediction
 def preprocess_for_prediction(data, lookback=60):
