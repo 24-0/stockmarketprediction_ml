@@ -60,7 +60,9 @@ def fetch_data(symbol, period='2y'):
     max_retries = 3
     for attempt in range(max_retries):
         try:
+            # Set user-agent to avoid impersonation issues in cloud
             ticker = yf.Ticker(symbol)
+            ticker.session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             data = ticker.history(period=period)
             if data.empty:
                 st.error(f"yfinance returned empty data for {symbol}. This could be due to invalid symbol, network issues, or Yahoo Finance API limits. Try a different symbol or check your connection.")
